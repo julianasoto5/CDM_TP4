@@ -54,9 +54,9 @@ void PWM_Init(){
 	TCCR1B |= ((1<<CS12) | (1<<CS10));
 	//TIMSK1 = (1<<TOIE1);
 	
-	OCR0A = 0;
-	OCR1B = 0;
-	OCR1A = 0;
+	OCR0A = 254;
+	OCR1B = 254;
+	OCR1A = 254;
 	
 	//reinicio contadores porque me pinta :D
 	TCNT0 = 0;
@@ -64,8 +64,7 @@ void PWM_Init(){
 }
 
 void PWM_Change_DC_RGB(rgb color, int8_t new_value){
-	colors_RGB[color] = new_value;
-	SerialPort_Send_uint8_t(colors_RGB[color]);
+	colors_RGB[color] = new_value*255/127;
 	switch (color){
 		case RED: Change_Red(); break;
 		case GREEN: Change_Green(); break;
@@ -75,7 +74,7 @@ void PWM_Change_DC_RGB(rgb color, int8_t new_value){
 }
 
 
-void Change_Red(){ //GUARDA ACA Q TOCA EL ROJO --> PD6=>PB5
+void Change_Red(){
 	OCR0A = colors_RGB[RED];
 }
 
@@ -86,4 +85,5 @@ void Change_Blue(){
 void Change_Green(){ 
 	OCR1B = colors_RGB[GREEN];
 }
+
 
