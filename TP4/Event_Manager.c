@@ -61,8 +61,7 @@ void Reception_Detected(){ //tres opciones. Esta esperando un RGB, un numero o u
 			while((ADCSRA&(1<<ADIF))==0); //wait for end of conversion
 			ADCSRA |= (1<<ADIF); //clear the ADIF flag
 			//SerialPort_send_int16_t(ADC);		
-			PWM_Change_DC_RGB(current_color,ADC);
-			_delay_ms(50);
+			PWM_Change_DC_RGB(current_color,2*ADCH);
 			select_color = 1;
 			showMsg(EXITO);
 			EVENT_MANAGER_ShowMsg(MENU);

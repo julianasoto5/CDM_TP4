@@ -2,7 +2,7 @@
 void ADC_Init(){
 	
 	ADMUX = (1<<REFS0); //Vref = VCC
-	ADMUX &= ~(1<<ADLAR); //Right justified 
+	ADMUX |= (1<<ADLAR); //Left justified 
 	ADMUX |= ((1<<MUX1)|(1<<MUX0)); //ADC3
 	
 	ADCSRA = (1<<ADEN); //Habilitacion del ADC
