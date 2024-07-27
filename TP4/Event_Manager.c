@@ -34,8 +34,7 @@ volatile uint8_t select_color = 1;
 rgb current_color=INIT;
 void EVENT_MANAGER_ShowWelcome(){
 	UART_Send_String(BIENVENIDA);
-	UART_Send_String(private_msg[MENU]);
-	UART_RX_Interrupt_Enable(); //habilito recepciones
+	Flag_Next = 1;
 }
 
 void showMsg(private_msg_type msg){

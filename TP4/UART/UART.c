@@ -25,7 +25,7 @@ void UART_Init(uint16_t ubrr_value) {
 	
 	UART_RX_Enable();		// Activo el Receptor del Puerto Serie
 	UART_TX_Enable();		// Activo el Transmisor del Puerto Serie
-	UART_RX_Interrupt_Enable();	// Activo Interrupci?n de recepcion
+	//UART_RX_Interrupt_Enable();	// Activo Interrupci?n de recepcion
 	// Habilitar transmisi?n y recepci?n
 	//UCSR0B = (1 << TXEN0) | (1 << RXEN0);
 	BUFFER_TX[0] = '\0';
