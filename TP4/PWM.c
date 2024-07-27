@@ -86,4 +86,8 @@ void Change_Green(){
 	OCR1B = colors_RGB[GREEN];
 }
 
+uint8_t* PWM_GetRGB(){
+	return colors_RGB;	
+}
+
 
