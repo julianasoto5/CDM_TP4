@@ -38,6 +38,8 @@ SUBDIRS :=  \
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../ADC.c \
+../Event_Manager.c \
 ../main.c \
 ../PWM.c \
 ../TIMER.c \
@@ -52,6 +54,8 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+ADC.o \
+Event_Manager.o \
 main.o \
 PWM.o \
 TIMER.o \
@@ -59,6 +63,8 @@ UART/serialPort.o \
 UART/UART.o
 
 OBJS_AS_ARGS +=  \
+ADC.o \
+Event_Manager.o \
 main.o \
 PWM.o \
 TIMER.o \
@@ -66,6 +72,8 @@ UART/serialPort.o \
 UART/UART.o
 
 C_DEPS +=  \
+ADC.d \
+Event_Manager.d \
 main.d \
 PWM.d \
 TIMER.d \
@@ -73,6 +81,8 @@ UART/serialPort.d \
 UART/UART.d
 
 C_DEPS_AS_ARGS +=  \
+ADC.d \
+Event_Manager.d \
 main.d \
 PWM.d \
 TIMER.d \
@@ -93,6 +103,20 @@ LINKER_SCRIPT_DEP+=
 
 
 # AVR32/GNU C Compiler
+./ADC.o: .././ADC.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
+./Event_Manager.o: .././Event_Manager.c
+	@echo Building file: $<
+	@echo Invoking: AVR/GNU C Compiler : 5.4.0
+	$(QUOTE)C:\Program Files (x86)\Atmel\Studio\7.0\toolchain\avr8\avr8-gnu-toolchain\bin\avr-gcc.exe$(QUOTE)  -x c -funsigned-char -funsigned-bitfields -DDEBUG  -I"C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\include"  -Og -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -g2 -Wall -mmcu=atmega328p -B "C:\Program Files (x86)\Atmel\Studio\7.0\Packs\atmel\ATmega_DFP\1.6.364\gcc\dev\atmega328p" -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"   -o "$@" "$<" 
+	@echo Finished building: $<
+	
+
 ./main.o: .././main.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : 5.4.0

@@ -1,66 +1,100 @@
 #include "PWM.h"
-#define PORT_RED PORTB5
-#define PORT_GREEN PORTB2
-#define PORT_BLUE PORTB1
+/*
 
-#define PWM_PERIOD 20
-#define PWM_DELTA 5
+1ra conclusion: Me voy a hacer la boluda y usar el PORTD6 en vez del
+PORTB5 asi ya tengo la señal generada y no tengo que hacer una 
+conversion rara (que dsps hay que hacerla pero primero que funcione).
 
+2da conclusion: No puede tener frecuencia 50Hz con resolucion
+de 8 bits y con un clock de 16MHz porque el preescalador necesario 
+seria 1250. Con el mas cercano, N = 1024, la frecuencia generada
+es de 61.03Hz (15625/256 Hz).
 
-#define PWM_OFF_RED PORTB &=~(1<<PORT_RED)
-#define PWM_OFF_GREEN PORTB &=~(1<<PORT_GREEN)
-#define PWM_OFF_BLUE PORTB &=~(1<<PORT_BLUE)
-
-#define PWM_ON_RED PORTB |= (1<<PORT_RED)
-#define PWM_ON_GREEN PORTB |=(1<<PORT_GREEN)
-#define PWM_ON_BLUE PORTB |= (1<<PORT_BLUE)
-
-#define PWM_START DDRB |= ((1<<PORT_RED) | (1<<PORT_GREEN) | (1<<PORT_BLUE))
-
-#define T 0.02
-#define PREESCALER 256
-#define GET_OCR1B ((F_CPU*T/PREESCALER)-1)  //Formula para el OCR1A
+*/
 
 
-volatile static int cont = 19;
 
-//50Hz --> T = 0.02s --> PWM_Update cada 1ms
+/*Necesitamos generar 3 señales, pero los timer solo tienen 2 unidades de 
+  comparación de salida cada uno. Hay que usar 2 timers. Usamos las dos
+  unidades del timer 1 y una unidad del timer 0.
+  
+  Configuracion del TIMER0:
+  - Modo de operación del Timer 0: Fast PWM, modo 3 --> 8bits de resolucion 
+  - Modo de Comparacion de salida: non-inverting mode --> hay que activar las 2 unidades
+  - Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente (15625/256)
+  - Habilitacion de interrupcion. ANALIZAR PORQUE NO SE QUE HABILITAR 
+  
+  Configuracion de TIMER1:
+  -  Modo de operacion: Fast PWM, modo 5 --> 8bits de resolucion
+  -  Modo de Comparacion de salida: nnon-inverting mode --> solo unidad A
+  -  Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente
+  -	 Habilitacion de interrupcion
+*/
+void Change_Blue();
+void Change_Green();
+void Change_Red();
+
+
+typedef struct {
+	uint8_t color;
+	uint8_t brightness;	
+	} colorRGB;
+
+static colorRGB colors_RGB[3];
+
+static uint8_t auxiliar;
+
 void PWM_Init(){
-	//Modo 5 Fast PWM, 8-bit
-	TCCR1A = (1<<WGM10); // 0x02	
-	TCCR1B = ((1<<WGM12)|(1<<CS12)); // Modo5 - Preescaler 256 //0x0C
-	OCR1B = GET_OCR1B;
 	
-	TIMSK1 = (1 << OCIE1B); 
+	//Inicialización TIMER0
+	TCCR0A = ((1<<WGM01) | (1<<WGM00)); //Modo 3
+	TCCR0A |= ((1<<COM0A1) | (1<<COM0A0)); //No invertido
+	TCCR0B = ((1<<CS02) | (1<<CS00)); //Preescalador
+	TIMSK0 = (1<<TOIE0);
 	
-	//TIMER0 CTC --> T=0.001 --> PREES = 64 --> OCR0A = 249
-	TCCR0A = (1<<WGM01);
-	TCCR0B = ((1<<CS01) | (1<<CS00));
-	OCR0A = 249;
+	//Inicialización TIMER1
+	TCCR1A = (1<<WGM10); //Modo 5
+	TCCR1B = (1<<WGM12);
+	TCCR1A |= ((1<<COM1A1) | (1<<COM1B1) | (1<<COM1A0) | (1<<COM1B0));//No invertido
+	TCCR1B |= ((1<<CS12) | (1<<CS10));
+	TIMSK1 = (1<<TOIE1);
 	
-	TIMSK0 = (1<<OCIE0A);
+	OCR0A = 0;
+	OCR1B = 0;
+	OCR1A = 0;
 	
-	
-	
+	//reinicio contadores porque me pinta :D
+	TCNT0 = 0;
+	TCNT1 = 0;
 }
 
-void PWM_Update(){
-	static uint16_t PWM_position = 0;
-	if (++PWM_position >= PWM_PERIOD){
-		PWM_position = 0;
+void PWM_Change_DC_RGB(rgb color, int8_t new_value){
+	colors_RGB[color].color = new_value;
+	switch (color){
+		case RED: Change_Red(); break;
+		case GREEN: Change_Green(); break;
+		case BLUE: Change_Blue(); break;
+		case INIT: break;
 	}
-	if (PWM_position < PWM_DELTA){
-		PWM_ON_BLUE;
-		PWM_ON_GREEN;
-		PWM_ON_RED;
-	} else {
-		PWM_OFF_BLUE; 
-		PWM_OFF_GREEN;
-		PWM_OFF_RED;
-	}
 }
 
-ISR (TIMER0_COMPA_vect){
-	PWM_Update();
+void PWM_Change_DC_RGB_Brightness(rgb color, int8_t new_value_color, int8_t new_value_brightness){
+	colors_RGB[color].brightness = 128-new_value_brightness;
+	PWM_Change_DC_RGB(color,new_value_color);
+	
 }
 
+void Change_Red(){ //GUARDA ACA Q TOCA EL ROJO --> PD6=>PB5
+	OCR0A = colors_RGB[RED].color*colors_RGB[RED].brightness/100;
+	auxiliar = OCR0A;
+}
+
+void Change_Blue(){ 
+	OCR1A = colors_RGB[BLUE].color*colors_RGB[BLUE].brightness/100;
+	auxiliar = OCR1A;
+}
+
+void Change_Green(){ 
+	OCR1B = colors_RGB[GREEN].color*colors_RGB[GREEN].brightness/100;
+	auxiliar = OCR1B;
+}

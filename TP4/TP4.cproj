@@ -136,6 +136,18 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ADC.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="ADC.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Event_Manager.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="Event_Manager.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="lib_delay.h">
       <SubType>compile</SubType>
     </Compile>
