@@ -15,13 +15,14 @@ uint8_t i = 0;
 int main(void){
 	cli();
 	UART_Init(0X67);
+	PWM_Init();
 	PWM_START;
 	DDRD = (1<<PORTD6);
 	ADC_Init();
 	sei();
 
-	EVENT_MANAGER_ShowWelcome();
-	EVENT_MANAGER_ShowMenu();
+	EVENT_MANAGER_ShowMsg(BIENVENIDA);
+	EVENT_MANAGER_ShowMsg(MENU);
 	while(1){
 		
 	}

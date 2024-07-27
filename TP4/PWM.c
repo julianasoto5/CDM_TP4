@@ -1,4 +1,5 @@
 #include "PWM.h"
+#include "UART/serialPort.h"
 /*
 
 1ra conclusion: Me voy a hacer la boluda y usar el PORTD6 en vez del
@@ -35,14 +36,8 @@ void Change_Green();
 void Change_Red();
 
 
-typedef struct {
-	uint8_t color;
-	uint8_t brightness;	
-	} colorRGB;
+static uint8_t colors_RGB[3];
 
-static colorRGB colors_RGB[3];
-
-static uint8_t auxiliar;
 
 void PWM_Init(){
 	
@@ -50,26 +45,27 @@ void PWM_Init(){
 	TCCR0A = ((1<<WGM01) | (1<<WGM00)); //Modo 3
 	TCCR0A |= ((1<<COM0A1) | (1<<COM0A0)); //No invertido
 	TCCR0B = ((1<<CS02) | (1<<CS00)); //Preescalador
-	TIMSK0 = (1<<TOIE0);
+	//TIMSK0 = (1<<TOIE0);
 	
 	//Inicialización TIMER1
 	TCCR1A = (1<<WGM10); //Modo 5
 	TCCR1B = (1<<WGM12);
 	TCCR1A |= ((1<<COM1A1) | (1<<COM1B1) | (1<<COM1A0) | (1<<COM1B0));//No invertido
 	TCCR1B |= ((1<<CS12) | (1<<CS10));
-	TIMSK1 = (1<<TOIE1);
+	//TIMSK1 = (1<<TOIE1);
 	
-	OCR0A = 0;
-	OCR1B = 0;
-	OCR1A = 0;
+	OCR0A = 255;
+	OCR1B = 255;
+	OCR1A = 255;
 	
 	//reinicio contadores porque me pinta :D
 	TCNT0 = 0;
 	TCNT1 = 0;
 }
 
-void PWM_Change_DC_RGB(rgb color, int8_t new_value){
-	colors_RGB[color].color = new_value;
+void PWM_Change_DC_RGB(rgb color, int16_t new_value){
+	colors_RGB[color] = new_value/1024;
+	SerialPort_Send_uint8_t(colors_RGB[color]);
 	switch (color){
 		case RED: Change_Red(); break;
 		case GREEN: Change_Green(); break;
@@ -78,23 +74,15 @@ void PWM_Change_DC_RGB(rgb color, int8_t new_value){
 	}
 }
 
-void PWM_Change_DC_RGB_Brightness(rgb color, int8_t new_value_color, int8_t new_value_brightness){
-	colors_RGB[color].brightness = 128-new_value_brightness;
-	PWM_Change_DC_RGB(color,new_value_color);
-	
-}
 
 void Change_Red(){ //GUARDA ACA Q TOCA EL ROJO --> PD6=>PB5
-	OCR0A = colors_RGB[RED].color*colors_RGB[RED].brightness/100;
-	auxiliar = OCR0A;
+	OCR0A = colors_RGB[RED];
 }
 
 void Change_Blue(){ 
-	OCR1A = colors_RGB[BLUE].color*colors_RGB[BLUE].brightness/100;
-	auxiliar = OCR1A;
+	OCR1A = colors_RGB[BLUE];
 }
 
 void Change_Green(){ 
-	OCR1B = colors_RGB[GREEN].color*colors_RGB[GREEN].brightness/100;
-	auxiliar = OCR1B;
+	OCR1B = colors_RGB[GREEN];
 }

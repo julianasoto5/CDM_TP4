@@ -160,12 +160,6 @@
     <Compile Include="PWM.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="TIMER.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="TIMER.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="UART\serialPort.c">
       <SubType>compile</SubType>
     </Compile>

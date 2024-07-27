@@ -57,11 +57,8 @@ void SerialPort_RX_Interrupt_Enable(void){
 // Espera hasta que el buffer de TX este libre.
 void SerialPort_Wait_For_TX_Buffer_Free(void){
 	// Pooling - Bloqueante hasta que termine de transmitir.
-		PORTB&=~(1<<PORTB5); _delay_ms(50);
 	while(!(UCSR0A & (1<<UDRE0)));
-	PORTB|=(1<<PORTB5);
-	_delay_ms(50);
-	PORTB&=~(1<<PORTB5);	
+
 }
 
 void SerialPort_Send_Data(char data){

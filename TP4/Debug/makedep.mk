@@ -10,8 +10,6 @@ main.c
 
 PWM.c
 
-TIMER.c
-
 UART\serialPort.c
 
 UART\UART.c

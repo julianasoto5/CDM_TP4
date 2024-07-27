@@ -7,8 +7,7 @@
 
 typedef enum {RED, GREEN, BLUE,INIT} rgb;
 void PWM_Init();
-void PWM_Change_DC_RGB(rgb color, int8_t new_value);
-void PWM_Change_DC_RGB_Brightness(rgb color, int8_t new_value_color, int8_t new_value_brightness);
+void PWM_Change_DC_RGB(rgb color, int16_t new_value);
 
 	
 

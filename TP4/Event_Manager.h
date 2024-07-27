@@ -4,8 +4,9 @@
 #include "PWM.h"
 #include "UART/UART.h"
 #include "ADC.h"
-	void EVENT_MANAGER_ShowWelcome();
+typedef enum{BIENVENIDA, MENU} public_msg_type;
 
-	void EVENT_MANAGER_ShowMenu();
+
+void EVENT_MANAGER_ShowMsg(public_msg_type);
 	
 #endif
