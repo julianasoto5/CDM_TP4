@@ -108,10 +108,10 @@ ISR(USART_UDRE_vect){
 	Transmition_Allowed();
 }*/
 
-/*ISR(TIMER0_OVF_vect){
-	
+ISR(TIMER0_OVF_vect){
+	PWM_ON_RED;	
 }
 
-ISR(TIMER1_OVF_vect){
-	
-}*/
+ISR(TIMER0_COMPA_vect){
+	PWM_OFF_RED;
+}

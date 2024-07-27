@@ -21,13 +21,13 @@ es de 61.03Hz (15625/256 Hz).
   
   Configuracion del TIMER0:
   - Modo de operación del Timer 0: Fast PWM, modo 3 --> 8bits de resolucion 
-  - Modo de Comparacion de salida: non-inverting mode --> hay que activar las 2 unidades
+  - Modo de Comparacion de salida: inverting mode -->  solo unidad A
   - Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente (15625/256)
   - Habilitacion de interrupcion. ANALIZAR PORQUE NO SE QUE HABILITAR 
   
   Configuracion de TIMER1:
   -  Modo de operacion: Fast PWM, modo 5 --> 8bits de resolucion
-  -  Modo de Comparacion de salida: nnon-inverting mode --> solo unidad A
+  -  Modo de Comparacion de salida: inverting mode --> ambas unidades
   -  Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente
   -	 Habilitacion de interrupcion
 */
@@ -43,14 +43,14 @@ void PWM_Init(){
 	
 	//Inicialización TIMER0
 	TCCR0A = ((1<<WGM01) | (1<<WGM00)); //Modo 3
-	TCCR0A |= ((1<<COM0A1) | (1<<COM0A0)); //No invertido
+	TCCR0A |= ((1<<COM0A1) | (1<<COM0A0)); //Invertido
 	TCCR0B = ((1<<CS02) | (1<<CS00)); //Preescalador
-	//TIMSK0 = (1<<TOIE0);
+	TIMSK0 = (1<<TOIE0) | (1<<OCIE0A);
 	
 	//Inicialización TIMER1
 	TCCR1A = (1<<WGM10); //Modo 5
 	TCCR1B = (1<<WGM12);
-	TCCR1A |= ((1<<COM1A1) | (1<<COM1B1) | (1<<COM1A0) | (1<<COM1B0));//No invertido
+	TCCR1A |= ((1<<COM1A1) | (1<<COM1B1) | (1<<COM1A0) | (1<<COM1B0));//Invertido
 	TCCR1B |= ((1<<CS12) | (1<<CS10));
 	//TIMSK1 = (1<<TOIE1);
 	
@@ -86,3 +86,4 @@ void Change_Blue(){
 void Change_Green(){ 
 	OCR1B = colors_RGB[GREEN];
 }
+

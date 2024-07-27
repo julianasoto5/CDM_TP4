@@ -17,7 +17,6 @@ int main(void){
 	UART_Init(0X67);
 	PWM_Init();
 	PWM_START;
-	DDRD = (1<<PORTD6);
 	ADC_Init();
 	sei();
 

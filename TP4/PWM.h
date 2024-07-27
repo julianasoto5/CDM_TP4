@@ -27,7 +27,4 @@ void PWM_Change_DC_RGB(rgb color, int8_t new_value);
 #define PWM_OFF_GREEN PORTB |=(1<<PORT_GREEN)
 #define PWM_OFF_BLUE PORTB |= (1<<PORT_BLUE)
 
-
-void PWM_Update();
-
 #endif
