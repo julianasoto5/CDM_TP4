@@ -27,7 +27,7 @@ void UART_Send_Data(char);
 
 char UART_Receive_Data();
 char UART_Get_Char_From_Buffer();
-void UART_Reset_Index();
+void UART_Reset_TX();
 
 
 #endif

@@ -9,7 +9,7 @@ static volatile uint8_t index_r = 0;
 static volatile uint8_t TX_enabled = 0; //desactivado
 static volatile uint8_t RX_enabled = 0;
 static volatile uint8_t cantL = 0;
-static uint8_t current_tx_status = 0;
+static uint8_t current_tx_status = 0; //capaz tdv lo necesito porque en send_string tarda un poquito en cargarse el BUFFER_TX
 
 
 void UART_Init(uint16_t ubrr_value) {
@@ -25,9 +25,7 @@ void UART_Init(uint16_t ubrr_value) {
 	
 	UART_RX_Enable();		// Activo el Receptor del Puerto Serie
 	UART_TX_Enable();		// Activo el Transmisor del Puerto Serie
-	//UART_RX_Interrupt_Enable();	// Activo Interrupci?n de recepcion
-	// Habilitar transmisi?n y recepci?n
-	//UCSR0B = (1 << TXEN0) | (1 << RXEN0);
+
 	BUFFER_TX[0] = '\0';
 }
 
@@ -78,20 +76,16 @@ uint8_t UART_Reception_Status(){
 	
 uint8_t UART_Write_Char(char c){
 	if (index_w<BUFFER_SIZE){
-		UART_TX_Interrupt_Disable();
 		BUFFER_TX[index_w++]=c;
-		UART_TX_Interrupt_Enable();
-		
 		return 1;
 	}return 0;
 }
-void UART_Send_String(char* str) {
+void UART_Send_String(char* str) { //solo llena el buffer
 	uint8_t i=0;
 	
-	while (BUFFER_TX[0]); //espera a q termine de transmitir
-	
-	cantL = strlen(str);
+	while (BUFFER_TX[0]); //espera a q este disponible el buffer
 	current_tx_status = 1;
+	cantL = strlen(str);
 	UART_TX_Interrupt_Enable();
 	
 	while (str[i]){
@@ -100,8 +94,6 @@ void UART_Send_String(char* str) {
 		}
 	}
 	BUFFER_TX[i] = '\0';
-	
-	//UART_TX_Disable();
 	
 }
 
@@ -118,18 +110,20 @@ char UART_Receive_Data(){
 char UART_Get_Char_From_Buffer(){
 	if ((index_r<index_w) && (BUFFER_TX[index_r]))
 		return BUFFER_TX[index_r++];
-	else return '\0';
+	else return 0;
 }
 
-void UART_Reset_Index(){
+void UART_Reset_TX(){
 	index_r = 0;
 	index_w = 0;
 	BUFFER_TX[0]='\0';
 	cantL=0;
 	current_tx_status = 0;
+	UART_TX_Interrupt_Disable();
+	
 }
 
 uint8_t UART_Current_TX_Status(){ //devuelve T si sigue transmitiendo
-	return (current_tx_status) && (index_r != cantL);//chequear esta condicion
+	return (current_tx_status) && (index_r != cantL); //se quiere transmitir algo y/o se esta transmitiendo
 }
 

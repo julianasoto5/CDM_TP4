@@ -28,7 +28,7 @@ const char* color_code = "\r\nEl color mostrado tiene el codigo RGB #%02X%02X%02
 
 volatile char data;
 volatile char c;
-
+char aux[200];
 
 volatile uint8_t select_color = 1;
 rgb current_color=INIT;
@@ -77,33 +77,30 @@ void Reception_Detected(){ //tres opciones. Esta esperando un RGB, un numero o u
 void Transmition_Allowed(){
 	if (!UART_Current_TX_Status()){
 			//Desactivo las interrupciones de transmision
-			UART_Reset_Index();
-			UART_TX_Interrupt_Disable();
+			UART_Reset_TX();
 	}else{
 
-	data = UART_Get_Char_From_Buffer();
-	if (data){
-		UART_Send_Data(data); 
-	}
+		data = UART_Get_Char_From_Buffer();
+		if (data){
+			UART_Send_Data(data);
+		}
 	}
 }
 
 void End_Convertion_ADC(){
 	PWM_Change_DC_RGB(current_color,ADCH);
-	UART_RX_Interrupt_Disable();
 	showMsg(EXITO);
 	
-/*	me lo ignora el forro jajajajja
 	uint8_t* color = PWM_GetRGB();
-	char* aux = "";
-	scanf(aux,color_code,color[RED],color[GREEN],color[BLUE]);
+	sprintf(aux,color_code,color[RED],color[GREEN],color[BLUE]);
 	UART_Send_String(aux);
-*/
+
 	select_color = 1;		
 	Flag_Next = 1;
 }
 
 void EVENT_MANAGER_Update(){
+
 	
 	if (Flag_COMPA){
 		PWM_OFF_RED;

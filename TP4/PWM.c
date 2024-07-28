@@ -1,16 +1,14 @@
 #include "PWM.h"
 #include "UART/serialPort.h"
 /*
-
-1ra conclusion: Me voy a hacer la boluda y usar el PORTD6 en vez del
-PORTB5 asi ya tengo la señal generada y no tengo que hacer una 
-conversion rara (que dsps hay que hacerla pero primero que funcione).
-
-2da conclusion: No puede tener frecuencia 50Hz con resolucion
+1ra conclusion: No puede tener frecuencia de 50Hz con resolucion
 de 8 bits y con un clock de 16MHz porque el preescalador necesario 
 seria 1250. Con el mas cercano, N = 1024, la frecuencia generada
 es de 61.03Hz (15625/256 Hz).
 
+2da Conclusion: La señal PWM del PB5 será generada por software
+porque no tiene un OCnx en su terminal (como si lo tienen el PB1
+y el PB2, con las salidas OC1A y OC1B respectivamente)
 */
 
 
@@ -31,12 +29,16 @@ es de 61.03Hz (15625/256 Hz).
   -  Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente
   -	 Habilitacion de interrupcion
 */
-void Change_Blue();
-void Change_Green();
-void Change_Red();
+void Update_Blue(void);
+void Update_Green(void);
+void Update_Red(void);
+
+void (*Update[])(void) = {Update_Red, Update_Green, Update_Blue};
+
 
 
 static uint8_t colors_RGB[3];
+
 
 
 void PWM_Init(){
@@ -54,9 +56,9 @@ void PWM_Init(){
 	TCCR1B |= ((1<<CS12) | (1<<CS10));
 	//TIMSK1 = (1<<TOIE1);
 	
-	OCR0A = 254;
-	OCR1B = 254;
-	OCR1A = 254;
+	OCR0A = 0;
+	OCR1B = 0;
+	OCR1A = 0;
 	
 	//reinicio contadores porque me pinta :D
 	TCNT0 = 0;
@@ -64,25 +66,22 @@ void PWM_Init(){
 }
 
 void PWM_Change_DC_RGB(rgb color, int8_t new_value){
-	colors_RGB[color] = new_value*255/127;
-	switch (color){
-		case RED: Change_Red(); break;
-		case GREEN: Change_Green(); break;
-		case BLUE: Change_Blue(); break;
-		case INIT: break;
-	}
+	colors_RGB[color] = new_value;
+	(*Update[color])();
 }
 
 
-void Change_Red(){
+void Update_Red(){
 	OCR0A = colors_RGB[RED];
+	if(OCR0A == 255) TIMSK0 &= ~(1<<OCIE0A);
+	else TIMSK0 |= (1<<OCIE0A);
 }
 
-void Change_Blue(){ 
+void Update_Blue(){ 
 	OCR1A = colors_RGB[BLUE];
 }
 
-void Change_Green(){ 
+void Update_Green(){ 
 	OCR1B = colors_RGB[GREEN];
 }
 
