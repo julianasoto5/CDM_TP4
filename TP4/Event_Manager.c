@@ -19,7 +19,7 @@ char* BIENVENIDA = {"\r\nBienvenidx al Controlador del LED RGB"};
 
 typedef enum{MENU, BRILLO, EXITO} private_msg_type;
 char private_msg[3][255] = {"\r\nSeleccione una letra para modificar un color:\r\nR (Red/Rojo)\r\nG (Green/Verde)\r\nB (Blue/Azul)\r\n",
-						"\r\nPara modificar el brillo del color seleccionado, modifique el potenciometro y luego presione cualquier tecla: ",
+						"\r\nModifique el potenciometro para variar el color. \r\nSi no está conforme con el color elegido y quiere volver al color anterior presione 'B', caso contrario presione cualquier otra tecla: ",
 						"\r\nModificacion realizada con exito."};
 
 typedef enum {INVALID} error_type;
@@ -31,7 +31,8 @@ volatile char c;
 char aux[200];
 
 volatile uint8_t select_color = 1;
-rgb current_color=INIT;
+static rgb current_color;
+static uint8_t previous_value;
 void EVENT_MANAGER_ShowWelcome(){
 	UART_Send_String(BIENVENIDA);
 	Flag_Next = 1;
@@ -39,6 +40,8 @@ void EVENT_MANAGER_ShowWelcome(){
 
 void showMsg(private_msg_type msg){
 	UART_Send_String(private_msg[msg]);
+	UART_RX_Interrupt_Enable();
+
 }
 
 void showError(error_type error){
@@ -52,16 +55,39 @@ void Reception_Detected(){ //tres opciones. Esta esperando un RGB, un numero o u
 	UART_RX_Interrupt_Disable();
 		if (select_color){ //esta esperando un RGB
 			switch (c){
-				case 'R': current_color = RED; select_color = 0; showMsg(BRILLO); break;
-				case 'G': current_color = GREEN; select_color = 0; showMsg(BRILLO); break;
-				case 'B': current_color = BLUE; select_color = 0; showMsg(BRILLO); break;
-				default: current_color = INIT;
-						 showError(INVALID);
-						 Flag_Next = 1;
+				case 'R': current_color = RED; 
+						  select_color = 0; 
+						  showMsg(BRILLO); 
+						  previous_value = PWM_GetRGB()[current_color];
+						  ADC_Polling_Enable();
+						  ADC_StartConvertion();
+						  break;
+				case 'G': current_color = GREEN; 
+						  select_color = 0; 
+						  showMsg(BRILLO);
+						  previous_value = PWM_GetRGB()[current_color];
+						  ADC_Polling_Enable();
+						  ADC_StartConvertion(); 
+						  break;
+				case 'B': current_color = BLUE; 
+						  select_color = 0; 
+						  showMsg(BRILLO); 
+						  previous_value = PWM_GetRGB()[current_color];
+						  ADC_Polling_Enable();
+						  ADC_StartConvertion();
+						  break;
+				default:  showError(INVALID);
+						  Flag_Next = 1;
 			}
-			UART_RX_Interrupt_Enable();
+			
 		}else {//esta esperando una tecla para el uso del potenciometro
-			ADC_StartConvertion();
+			
+			ADC_Polling_Disable();
+			if (c =='B'){
+				PWM_Change_DC_RGB(current_color,previous_value);
+				
+			}
+			End_Convertion_ADC();
 			//ADC = 0
 			//Next = 0
 			//RX = 0
@@ -88,7 +114,7 @@ void Transmition_Allowed(){
 }
 
 void End_Convertion_ADC(){
-	PWM_Change_DC_RGB(current_color,ADCH);
+	//PWM_Change_DC_RGB(current_color,ADCH);
 	showMsg(EXITO);
 	
 	uint8_t* color = PWM_GetRGB();
@@ -117,7 +143,9 @@ void EVENT_MANAGER_Update(){
 	}
 	
 	if (Flag_ADC){
-		End_Convertion_ADC();
+		//End_Convertion_ADC();
+		PWM_Change_DC_RGB(current_color, ADCH);
+		ADC_StartConvertion();
 		Flag_ADC = 0;
 	}
 	if (Flag_Next){
@@ -140,7 +168,9 @@ ISR(TIMER0_OVF_vect){
 
 
 ISR (ADC_vect){ //ADC Convertion Complete
-	Flag_ADC = 1;
+			PWM_Change_DC_RGB(current_color, ADCH);
+			ADC_StartConvertion();
+	//Flag_ADC = 1;
 }
 
 

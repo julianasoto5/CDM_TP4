@@ -21,13 +21,13 @@ y el PB2, con las salidas OC1A y OC1B respectivamente)
   - Modo de operación del Timer 0: Fast PWM, modo 3 --> 8bits de resolucion 
   - Modo de Comparacion de salida: inverting mode -->  solo unidad A
   - Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente (15625/256)
-  - Habilitacion de interrupcion. ANALIZAR PORQUE NO SE QUE HABILITAR 
+  - Habilitacion de interrupcion
   
   Configuracion de TIMER1:
   -  Modo de operacion: Fast PWM, modo 5 --> 8bits de resolucion
   -  Modo de Comparacion de salida: inverting mode --> ambas unidades
   -  Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente
-  -	 Habilitacion de interrupcion
+ 
 */
 void Update_Blue(void);
 void Update_Green(void);
@@ -54,7 +54,6 @@ void PWM_Init(){
 	TCCR1B = (1<<WGM12);
 	TCCR1A |= ((1<<COM1A1) | (1<<COM1B1) | (1<<COM1A0) | (1<<COM1B0));//Invertido
 	TCCR1B |= ((1<<CS12) | (1<<CS10));
-	//TIMSK1 = (1<<TOIE1);
 	
 	OCR0A = 0;
 	OCR1B = 0;
@@ -74,7 +73,10 @@ void PWM_Change_DC_RGB(rgb color, int8_t new_value){
 void Update_Red(){
 	OCR0A = colors_RGB[RED];
 	if(OCR0A == 255) TIMSK0 &= ~(1<<OCIE0A);
-	else TIMSK0 |= (1<<OCIE0A);
+	else if (!OCR0A){
+		TIMSK0 &= ~(1<<TOIE0);
+	} else TIMSK0 |= (1<<TOIE0) | (1<<OCIE0A);
+	
 }
 
 void Update_Blue(){ 

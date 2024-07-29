@@ -6,4 +6,10 @@
 
 void ADC_Init();
 void ADC_StartConvertion();
+
+void ADC_Polling_Enable();
+void ADC_Polling_Disable();
+
+
+
 #endif
