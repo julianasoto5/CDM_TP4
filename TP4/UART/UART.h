@@ -3,7 +3,9 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "serialPort.h"
+#include <string.h>
+#include "../lib_delay.h"
+
 #define BUFFER_SIZE 300
 
 

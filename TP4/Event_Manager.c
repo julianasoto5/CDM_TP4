@@ -1,8 +1,7 @@
 
 //Event Manager
 #include "Event_Manager.h"
-#include <util/delay.h>
-#include <stdio.h>
+
 #define ENTER '\r'
 #define CONVERT_NUM_CHAR_TO_INT(x) x-'0'
 

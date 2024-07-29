@@ -1,10 +1,11 @@
 #ifndef EVENT_MANAGER_H_
 #define EVENT_MANAGER_H_
 #include <avr/io.h>
-#include "PWM.h"
-#include "UART/UART.h"
-#include "ADC.h"
+#include <stdio.h>
 
+#include "PWM_RGB/PWM_RGB.h"
+#include "UART/UART.h"
+#include "ADC/ADC.h"
 
 
 

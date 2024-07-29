@@ -1,4 +1,5 @@
 #include <avr/io.h>
+#include "ADC.h"
 void ADC_Init(){
 	//DDRC &= ~(1<<channel); //INPUT
 	

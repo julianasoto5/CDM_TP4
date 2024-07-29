@@ -1,6 +1,5 @@
 #ifndef PWM_H
 #define PWM_H
-#include "lib_delay.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 

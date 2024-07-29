@@ -1,5 +1,4 @@
-#include "PWM.h"
-#include "UART/serialPort.h"
+#include "PWM_RGB.h"
 /*
 1ra conclusion: No puede tener frecuencia de 50Hz con resolucion
 de 8 bits y con un clock de 16MHz porque el preescalador necesario 

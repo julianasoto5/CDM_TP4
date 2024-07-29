@@ -1,7 +1,6 @@
 
 #include "UART.h"
-#include <string.h>
-#include "../lib_delay.h"
+
 
 static volatile char BUFFER_TX [BUFFER_SIZE];
 static volatile uint8_t index_w = 0;

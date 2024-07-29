@@ -1,17 +1,10 @@
-/*
- * TP4.c
- *
- * Created: 7/15/2024 4:25:55 PM
- * Author : julis
- */ 
-
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include "PWM.h"
-#include "ADC.h"
+#include "PWM_RGB/PWM_RGB.h"
+#include "ADC/ADC.h"
 #include "lib_delay.h"
 #include "Event_Manager.h"
-uint8_t i = 0;
+
 int main(void){
 	cli();
 	UART_Init(0X67);

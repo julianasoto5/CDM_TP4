@@ -136,10 +136,10 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ADC.c">
+    <Compile Include="ADC\ADC.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="ADC.h">
+    <Compile Include="ADC\ADC.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Event_Manager.c">
@@ -154,16 +154,10 @@
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PWM.c">
+    <Compile Include="PWM_RGB\PWM_RGB.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="PWM.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="UART\serialPort.c">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="UART\serialPort.h">
+    <Compile Include="PWM_RGB\PWM_RGB.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="UART\UART.c">
@@ -174,6 +168,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="ADC" />
+    <Folder Include="PWM_RGB" />
     <Folder Include="UART" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />

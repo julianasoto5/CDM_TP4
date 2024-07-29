@@ -15,19 +15,19 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   5 .debug_aranges 000001c0  00000000  00000000  000010e0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00001306  00000000  00000000  000012a0  2**0
+  6 .debug_info   000012fd  00000000  00000000  000012a0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 00000aae  00000000  00000000  000025a6  2**0
+  7 .debug_abbrev 00000a9d  00000000  00000000  0000259d  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000b2e  00000000  00000000  00003054  2**0
+  8 .debug_line   00000b70  00000000  00000000  0000303a  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  000003e8  00000000  00000000  00003b84  2**2
+  9 .debug_frame  000003e8  00000000  00000000  00003bac  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    000007a2  00000000  00000000  00003f6c  2**0
+ 10 .debug_str    000007ae  00000000  00000000  00003f94  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000470  00000000  00000000  0000470e  2**0
+ 11 .debug_loc    00000470  00000000  00000000  00004742  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000170  00000000  00000000  00004b7e  2**0
+ 12 .debug_ranges 00000170  00000000  00000000  00004bb2  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -102,6 +102,7 @@ Disassembly of section .text:
 
 000000a6 <ADC_Init>:
 #include <avr/io.h>
+#include "ADC.h"
 void ADC_Init(){
 	//DDRC &= ~(1<<channel); //INPUT
 	
@@ -637,10 +638,10 @@ ISR(USART_UDRE_vect){
  3ee:	18 95       	reti
 
 000003f0 <main>:
-#include "ADC.h"
+#include "ADC/ADC.h"
 #include "lib_delay.h"
 #include "Event_Manager.h"
-uint8_t i = 0;
+
 int main(void){
 	cli();
  3f0:	f8 94       	cli
