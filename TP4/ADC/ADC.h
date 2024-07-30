@@ -3,12 +3,11 @@
 
 #include <avr/io.h>
 
-
 void ADC_Init();
 void ADC_StartConvertion();
 
-void ADC_Polling_Enable();
-void ADC_Polling_Disable();
+void ADC_Interrupt_Enable();
+void ADC_Interrupt_Disable();
 
 
 

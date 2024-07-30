@@ -8,7 +8,6 @@
 #include "ADC/ADC.h"
 
 
-
 void EVENT_MANAGER_ShowWelcome();
 void EVENT_MANAGER_Update();
 	

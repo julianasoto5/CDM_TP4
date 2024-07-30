@@ -1,7 +1,6 @@
-#include <avr/io.h>
 #include "ADC.h"
 void ADC_Init(){
-	//DDRC &= ~(1<<channel); //INPUT
+	DDRC = ~(1<<PORTC3); //Input
 	
 	ADMUX = (1<<REFS0); //Vref = VCC
 	ADMUX |= (1<<ADLAR); //Left justified 
@@ -19,11 +18,11 @@ void ADC_StartConvertion(){
 	ADCSRA |= (1<<ADSC); //activo conversion. Cuando termine se va a bajar el nivel automaticamente, lo que desencadena la interrupcion
 }
 
-void ADC_Polling_Enable(){
+void ADC_Interrupt_Enable(){
 	ADCSRA |= (1<<ADIE); //Habilitacion de interrupcion de conversion completa
 }
 
-void ADC_Polling_Disable(){
+void ADC_Interrupt_Disable(){
 	ADCSRA &= ~(1<<ADIE); //Deshabilitacion de interrupcion de conversion completa
 }
 

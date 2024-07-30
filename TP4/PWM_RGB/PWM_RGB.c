@@ -18,14 +18,13 @@ y el PB2, con las salidas OC1A y OC1B respectivamente)
   
   Configuracion del TIMER0:
   - Modo de operación del Timer 0: Fast PWM, modo 3 --> 8bits de resolucion 
-  - Modo de Comparacion de salida: inverting mode -->  solo unidad A
   - Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente (15625/256)
-  - Habilitacion de interrupcion
+  - Habilitacion de interrupciones para generacion señal PWM por software
   
   Configuracion de TIMER1:
   -  Modo de operacion: Fast PWM, modo 5 --> 8bits de resolucion
   -  Modo de Comparacion de salida: inverting mode --> ambas unidades
-  -  Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente
+  -  Preescalador N = 1024 --> frecuencia de 61.03Hz aproximadamente (15625/256)
  
 */
 void Update_Blue(void);
@@ -44,23 +43,17 @@ void PWM_Init(){
 	
 	//Inicialización TIMER0
 	TCCR0A = ((1<<WGM01) | (1<<WGM00)); //Modo 3
-	TCCR0A |= ((1<<COM0A1) | (1<<COM0A0)); //Invertido
 	TCCR0B = ((1<<CS02) | (1<<CS00)); //Preescalador
-	TIMSK0 = (1<<TOIE0) | (1<<OCIE0A);
+	TIMSK0 = (1<<TOIE0) | (1<<OCIE0A); //Interrupciones
 	
 	//Inicialización TIMER1
-	TCCR1A = (1<<WGM10); //Modo 5
-	TCCR1B = (1<<WGM12);
+	TCCR1A = (1<<WGM10);TCCR1B = (1<<WGM12); //Modo 5
 	TCCR1A |= ((1<<COM1A1) | (1<<COM1B1) | (1<<COM1A0) | (1<<COM1B0));//Invertido
-	TCCR1B |= ((1<<CS12) | (1<<CS10));
+	TCCR1B |= ((1<<CS12) | (1<<CS10)); //Preescalador
 	
 	OCR0A = 0;
 	OCR1B = 0;
 	OCR1A = 0;
-	
-	//reinicio contadores porque me pinta :D
-	TCNT0 = 0;
-	TCNT1 = 0;
 }
 
 void PWM_Change_DC_RGB(rgb color, int8_t new_value){

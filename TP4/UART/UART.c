@@ -13,12 +13,12 @@ static uint8_t current_tx_status = 0; //capaz tdv lo necesito porque en send_str
 
 void UART_Init(uint16_t ubrr_value) {
 	
-	// Configuraci?n de baud rate
+	// Configuración de baud rate
 	UBRR0H = (uint8_t)(ubrr_value >> 8); // Parte alta del UBRR
 	
 	UBRR0L = (uint8_t)ubrr_value;
 	
-	// Configuraci?n: 8 bits de datos, sin paridad, 1 bit de parada (stop bit)
+	// Configuración: 8 bits de datos, sin paridad, 1 bit de parada (stop bit)
 	UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
 	
 	
@@ -29,7 +29,7 @@ void UART_Init(uint16_t ubrr_value) {
 }
 
 
-void UART_TX_Disable(){
+void UART_TX_Disable(){ 
 	UCSR0B &=~(1<<TXEN0);
 	TX_enabled = 0;
 }
@@ -60,7 +60,7 @@ void UART_RX_Interrupt_Enable(){
 	UCSR0B |= (1<<RXCIE0);
 }
 
-void UART_RX_Interrupt_Disable(){
+void UART_RX_Interrupt_Disable(){ 
 	UCSR0B &= ~(1<<RXCIE0);
 }
 
@@ -69,7 +69,7 @@ uint8_t UART_TX_Status(){
 	return TX_enabled;
 }
 
-uint8_t UART_Reception_Status(){ 
+uint8_t UART_Reception_Status(){  
 	return RX_enabled;
 }
 	
@@ -79,6 +79,7 @@ uint8_t UART_Write_Char(char c){
 		return 1;
 	}return 0;
 }
+
 void UART_Send_String(char* str) { //solo llena el buffer
 	uint8_t i=0;
 	
@@ -122,7 +123,7 @@ void UART_Reset_TX(){
 	
 }
 
-uint8_t UART_Current_TX_Status(){ //devuelve T si sigue transmitiendo
+uint8_t UART_Current_TX_Status(){ //devuelve True si sigue transmitiendo
 	return (current_tx_status) && (index_r != cantL); //se quiere transmitir algo y/o se esta transmitiendo
 }
 

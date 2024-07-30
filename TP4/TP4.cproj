@@ -148,9 +148,6 @@
     <Compile Include="Event_Manager.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="lib_delay.h">
-      <SubType>compile</SubType>
-    </Compile>
     <Compile Include="main.c">
       <SubType>compile</SubType>
     </Compile>
